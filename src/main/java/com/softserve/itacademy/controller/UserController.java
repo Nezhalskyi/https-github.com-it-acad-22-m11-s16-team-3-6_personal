@@ -10,6 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -40,9 +43,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/read")
-    public String read(@PathVariable long id, Model model) {
+    public String read(@PathVariable long id, Model model) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
-            id = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         User user = userService.readById(id);
         model.addAttribute("user", user);
@@ -50,9 +53,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/update")
-    public String update(@PathVariable long id, Model model) {
+    public String update(@PathVariable long id, Model model) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
-            id = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         User user = userService.readById(id);
         model.addAttribute("user", user);
@@ -62,9 +65,9 @@ public class UserController {
 
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable long id, Model model, @Validated @ModelAttribute("user") User user, @RequestParam("roleId") long roleId, BindingResult result) {
+    public String update(@PathVariable long id, Model model, @Validated @ModelAttribute("user") User user, @RequestParam("roleId") long roleId, BindingResult result) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
-            id = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         User oldUser = userService.readById(id);
         if (result.hasErrors()) {
@@ -83,9 +86,9 @@ public class UserController {
 
 
     @GetMapping("/{id}/delete")
-    public String delete(@PathVariable("id") long id) {
+    public String delete(@PathVariable("id") long id) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
-            id = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         userService.delete(id);
         return "redirect:/users/all";
@@ -93,7 +96,11 @@ public class UserController {
 
     @GetMapping("/all")
     public String getAll(Model model) {
-        model.addAttribute("users", userService.getAll());
+        List<User> users = userService.getAll();
+        if (!Utilities.isAdmin()) {
+            users.removeIf(u -> u.getId() != Utilities.getUserDetails().getId());
+        }
+        model.addAttribute("users", users);
         return "users-list";
     }
 }

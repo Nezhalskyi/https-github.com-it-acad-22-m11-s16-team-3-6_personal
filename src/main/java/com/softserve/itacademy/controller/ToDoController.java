@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +33,9 @@ public class ToDoController {
     }
 
     @GetMapping("/create/users/{owner_id}")
-    public String create(@PathVariable("owner_id") long ownerId, Model model) {
+    public String create(@PathVariable("owner_id") long ownerId, Model model) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
-            ownerId = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         model.addAttribute("todo", new ToDo());
         model.addAttribute("ownerId", ownerId);
@@ -42,9 +43,9 @@ public class ToDoController {
     }
 
     @PostMapping("/create/users/{owner_id}")
-    public String create(@PathVariable("owner_id") long ownerId, @Validated @ModelAttribute("todo") ToDo todo, BindingResult result) {
+    public String create(@PathVariable("owner_id") long ownerId, @Validated @ModelAttribute("todo") ToDo todo, BindingResult result) throws AccessDeniedException {
         if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
-            ownerId = Utilities.getUserDetails().getId();
+            throw new AccessDeniedException("Access denied");
         }
         if (result.hasErrors()) {
             return "create-todo";
@@ -56,11 +57,15 @@ public class ToDoController {
     }
 
     @GetMapping("/{id}/tasks")
-    public String read(@PathVariable long id, Model model) {
+    public String read(@PathVariable long id, Model model) throws AccessDeniedException {
         ToDo todo = todoService.readById(id);
+        if (!todoService.getByUserId(Utilities.getUserDetails().getId()).contains(todo) && !Utilities.isAdmin()) {
+            throw new AccessDeniedException("Access denied");
+        }
         List<Task> tasks = taskService.getByTodoId(id);
         List<User> users = userService.getAll().stream()
                 .filter(user -> user.getId() != todo.getOwner().getId()).collect(Collectors.toList());
+        users.removeAll(todo.getCollaborators());
         model.addAttribute("todo", todo);
         model.addAttribute("tasks", tasks);
         model.addAttribute("users", users);
@@ -68,7 +73,10 @@ public class ToDoController {
     }
 
     @GetMapping("/{todo_id}/update/users/{owner_id}")
-    public String update(@PathVariable("todo_id") long todoId, @PathVariable("owner_id") long ownerId, Model model) {
+    public String update(@PathVariable("todo_id") long todoId, @PathVariable("owner_id") long ownerId, Model model) throws AccessDeniedException {
+        if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
+            throw new AccessDeniedException("Access denied");
+        }
         ToDo todo = todoService.readById(todoId);
         model.addAttribute("todo", todo);
         return "update-todo";
@@ -89,13 +97,19 @@ public class ToDoController {
     }
 
     @GetMapping("/{todo_id}/delete/users/{owner_id}")
-    public String delete(@PathVariable("todo_id") long todoId, @PathVariable("owner_id") long ownerId) {
+    public String delete(@PathVariable("todo_id") long todoId, @PathVariable("owner_id") long ownerId) throws AccessDeniedException {
+        if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
+            throw new AccessDeniedException("Access denied");
+        }
         todoService.delete(todoId);
         return "redirect:/todos/all/users/" + ownerId;
     }
 
     @GetMapping("/all/users/{user_id}")
-    public String getAll(@PathVariable("user_id") long userId, Model model) {
+    public String getAll(@PathVariable("user_id") long userId, Model model) throws AccessDeniedException {
+        if (Utilities.getUserDetails().getId() != userId && !Utilities.isAdmin()) {
+            throw new AccessDeniedException("Access denied");
+        }
         List<ToDo> todos = todoService.getByUserId(userId);
         model.addAttribute("todos", todos);
         model.addAttribute("user", userService.readById(userId));
