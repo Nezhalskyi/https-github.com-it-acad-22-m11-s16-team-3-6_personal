@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(readById(id));
     }
 
-    @PostFilter("hasAuthority('ADMIN') or filterObject.username == principal.username")
+    @PostFilter("hasAuthority('ADMIN') or filterObject.email == principal.username")
     @Override
     public List<User> getAll() {
         List<User> users = userRepository.findAll();
