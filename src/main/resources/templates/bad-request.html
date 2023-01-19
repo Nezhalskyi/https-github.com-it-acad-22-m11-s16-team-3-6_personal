@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="css/bootstrap.min.css">
-    <title>Bad Request Page</title>
-</head>
+<head th:include="head :: head" th:with="pageTitle='Bad Request Page'"></head>
 <body>
 <div th:replace="header"></div>
 <br>
