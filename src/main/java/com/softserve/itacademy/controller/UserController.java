@@ -1,6 +1,7 @@
 package com.softserve.itacademy.controller;
 
 import com.softserve.itacademy.model.User;
+import com.softserve.itacademy.security.Utilities;
 import com.softserve.itacademy.service.RoleService;
 import com.softserve.itacademy.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,9 @@ public class UserController {
 
     @GetMapping("/{id}/read")
     public String read(@PathVariable long id, Model model) {
+        if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
+            id = Utilities.getUserDetails().getId();
+        }
         User user = userService.readById(id);
         model.addAttribute("user", user);
         return "user-info";
@@ -47,6 +51,9 @@ public class UserController {
 
     @GetMapping("/{id}/update")
     public String update(@PathVariable long id, Model model) {
+        if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
+            id = Utilities.getUserDetails().getId();
+        }
         User user = userService.readById(id);
         model.addAttribute("user", user);
         model.addAttribute("roles", roleService.getAll());
@@ -56,6 +63,9 @@ public class UserController {
 
     @PostMapping("/{id}/update")
     public String update(@PathVariable long id, Model model, @Validated @ModelAttribute("user") User user, @RequestParam("roleId") long roleId, BindingResult result) {
+        if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
+            id = Utilities.getUserDetails().getId();
+        }
         User oldUser = userService.readById(id);
         if (result.hasErrors()) {
             user.setRole(oldUser.getRole());
@@ -74,6 +84,9 @@ public class UserController {
 
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable("id") long id) {
+        if (Utilities.getUserDetails().getId() != id && !Utilities.isAdmin()) {
+            id = Utilities.getUserDetails().getId();
+        }
         userService.delete(id);
         return "redirect:/users/all";
     }

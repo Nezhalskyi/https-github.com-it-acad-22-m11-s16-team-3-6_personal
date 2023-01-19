@@ -2,12 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <title>All ToDo lists of User</title>
 </head>
 <body>
 <div th:replace="header"></div>
-<div class="col-md-offset-2 col-sm-8">
+<div class="row">
+    <div class="col-md-8 offset-md-2">
     <h2 th:text="${'All ToDo Lists of ' + user.firstName + ' ' + user.lastName}"/>
     <form th:action="@{|/todos/create/users/${user.id}|}" method="get">
         <div align="right">
@@ -40,6 +42,7 @@
             </td>
         </tr>
     </table>
+</div>
 </div>
 
 </body>

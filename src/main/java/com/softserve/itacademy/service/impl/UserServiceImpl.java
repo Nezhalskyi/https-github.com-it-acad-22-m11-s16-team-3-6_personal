@@ -4,6 +4,7 @@ import com.softserve.itacademy.exception.NullEntityReferenceException;
 import com.softserve.itacademy.model.User;
 import com.softserve.itacademy.repository.UserRepository;
 import com.softserve.itacademy.service.UserService;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(readById(id));
     }
 
+    @PostFilter("hasAuthority('ADMIN') or filterObject.username == principal.username")
     @Override
     public List<User> getAll() {
         List<User> users = userRepository.findAll();
