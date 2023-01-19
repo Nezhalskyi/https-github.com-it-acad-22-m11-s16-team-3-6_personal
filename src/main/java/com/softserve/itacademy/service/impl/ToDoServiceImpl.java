@@ -54,7 +54,6 @@ public class ToDoServiceImpl implements ToDoService {
         return todos.isEmpty() ? new ArrayList<>() : todos;
     }
 
-    @PostFilter("hasAuthority('ADMIN') or filterObject.owner.email == principal.username")
     @Override
     public List<ToDo> getByUserId(long userId) {
         List<ToDo> todos = todoRepository.getByUserId(userId);
