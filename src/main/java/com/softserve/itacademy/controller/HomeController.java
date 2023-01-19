@@ -25,10 +25,7 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("users", userService.getAll());
         model.addAttribute("userName", Utilities.getUserName());
-
-        System.out.println(Utilities.getUserDetails().getId());
-        System.out.println(Utilities.getUserName());
-
+        model.addAttribute("userId",Utilities.getUserDetails().getId());
         return "home";
     }
 }
