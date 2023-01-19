@@ -39,6 +39,8 @@ public class ToDoController {
         }
         model.addAttribute("todo", new ToDo());
         model.addAttribute("ownerId", ownerId);
+        model.addAttribute("userName", Utilities.getUserName());
+        model.addAttribute("userId", Utilities.getUserDetails().getId());
         return "create-todo";
     }
 
@@ -69,6 +71,8 @@ public class ToDoController {
         model.addAttribute("todo", todo);
         model.addAttribute("tasks", tasks);
         model.addAttribute("users", users);
+        model.addAttribute("userName", Utilities.getUserName());
+        model.addAttribute("userId", Utilities.getUserDetails().getId());
         return "todo-tasks";
     }
 
@@ -79,6 +83,8 @@ public class ToDoController {
         }
         ToDo todo = todoService.readById(todoId);
         model.addAttribute("todo", todo);
+        model.addAttribute("userName", Utilities.getUserName());
+        model.addAttribute("userId", Utilities.getUserDetails().getId());
         return "update-todo";
     }
 
@@ -113,16 +119,20 @@ public class ToDoController {
         List<ToDo> todos = todoService.getByUserId(userId);
         model.addAttribute("todos", todos);
         model.addAttribute("user", userService.readById(userId));
+        model.addAttribute("userName", Utilities.getUserName());
+        model.addAttribute("userId", Utilities.getUserDetails().getId());
         return "todos-user";
     }
 
     @GetMapping("/{id}/add")
-    public String addCollaborator(@PathVariable long id, @RequestParam("user_id") long userId) {
+    public String addCollaborator(@PathVariable long id, @RequestParam("user_id") long userId, Model model) {
         ToDo todo = todoService.readById(id);
         List<User> collaborators = todo.getCollaborators();
         collaborators.add(userService.readById(userId));
         todo.setCollaborators(collaborators);
         todoService.update(todo);
+        model.addAttribute("userName", Utilities.getUserName());
+        model.addAttribute("userId", Utilities.getUserDetails().getId());
         return "redirect:/todos/" + id + "/tasks";
     }
 
