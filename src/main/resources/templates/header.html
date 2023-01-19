@@ -1,6 +1,6 @@
 <div xmlns:th="http://www.thymeleaf.org/extras/spring-security"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav sec:authorize="authenticated" class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">TODOs List</a>
             <button
