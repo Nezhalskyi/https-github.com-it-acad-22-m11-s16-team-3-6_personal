@@ -3,6 +3,7 @@ package com.softserve.itacademy.controller;
 import com.softserve.itacademy.model.Task;
 import com.softserve.itacademy.model.ToDo;
 import com.softserve.itacademy.model.User;
+import com.softserve.itacademy.security.Utilities;
 import com.softserve.itacademy.service.TaskService;
 import com.softserve.itacademy.service.ToDoService;
 import com.softserve.itacademy.service.UserService;
@@ -32,6 +33,9 @@ public class ToDoController {
 
     @GetMapping("/create/users/{owner_id}")
     public String create(@PathVariable("owner_id") long ownerId, Model model) {
+        if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
+            ownerId = Utilities.getUserDetails().getId();
+        }
         model.addAttribute("todo", new ToDo());
         model.addAttribute("ownerId", ownerId);
         return "create-todo";
@@ -39,6 +43,9 @@ public class ToDoController {
 
     @PostMapping("/create/users/{owner_id}")
     public String create(@PathVariable("owner_id") long ownerId, @Validated @ModelAttribute("todo") ToDo todo, BindingResult result) {
+        if (Utilities.getUserDetails().getId() != ownerId && !Utilities.isAdmin()) {
+            ownerId = Utilities.getUserDetails().getId();
+        }
         if (result.hasErrors()) {
             return "create-todo";
         }
