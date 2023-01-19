@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Update existing To-Do</title>
-</head>
+<head th:include="head :: head" th:with="pageTitle='Update existing To-Do'"></head>
 <body>
 <div th:replace="header"></div>
 <div class="col-md-offset-2 col-sm-6">

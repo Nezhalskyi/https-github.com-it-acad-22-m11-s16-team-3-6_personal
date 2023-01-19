@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Error Page</title>
-</head>
+<head th:include="head :: head" th:with="pageTitle='Error Page'"></head>
 <body>
 <div th:replace="header"></div>
 <br>

@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Create New ToDo List</title>
-</head>
+<head th:include="head :: head" th:with="pageTitle='Create New ToDo List'"></head>
 <body>
 <div th:replace="header"></div>
 <div class="col-md-offset-2">
